@@ -21,18 +21,14 @@ class BooksApp extends Component {
   }
 
   onShelfChange = (book, shelf) => {
-    BooksAPI.update(book, shelf).then(
-      this.setState((state) => ({
-          myReads: state.myReads.map(b => {
-              if (b.title === book.title) {
-                  b.shelf = shelf;
-                  return b
-              } else {
-                  return b
-              }
-          }),
-      }))
-    )
+    if (this.state.myReads) {
+      BooksAPI.update(book, shelf).then(() => {
+        book.shelf = shelf
+        const movedBooks = this.state.myReads.filter(b => b.id !== book.id)
+        movedBooks.push(book);
+        this.setState({ myReads: movedBooks })
+      })
+    }
   };
 
   render() {
