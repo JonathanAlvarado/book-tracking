@@ -21,7 +21,6 @@ export default class SearchBook extends Component {
     }
 
     BooksAPI.search(query, 20).then(searchResults => {
-      console.log(searchResults);
       if (searchResults.error) {
         searchResults = [];
       }
@@ -34,6 +33,8 @@ export default class SearchBook extends Component {
           const alreadyInShelf = this.props.books.find(b => b.id === book.id);
           if (alreadyInShelf) {
             book.shelf = alreadyInShelf.shelf;
+          }else{
+            book.shelf = "none";
           }
           return book;
         });
