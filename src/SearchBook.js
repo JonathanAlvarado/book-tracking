@@ -3,38 +3,43 @@ import {Link} from 'react-router-dom';
 import * as BooksAPI from './BooksAPI';
 import Book from './Book';
 
+
 export default class SearchBook extends Component {
 
-  // constructor(args) {
-  //   super(args);
-  //   this.state = {
-  //       searchResults: []
-  //   }
-  // }
-
   state = {
-    searchResults: []
+    searchResults: [],
+    query: ''
   }
 
   search = (e) => {
     const query = e.target.value;
+    this.setState({query: query})
+
     if (!query) {
       this.setState({searchResults: []});
       return;
     }
 
     BooksAPI.search(query, 20).then(searchResults => {
+      console.log(searchResults);
       if (searchResults.error) {
         searchResults = [];
       }
-      searchResults = searchResults.map((book) => {
-        const alreadyInShelf = this.props.books.find(b => b.id === book.id);
-        if (alreadyInShelf) {
-          book.shelf = alreadyInShelf.shelf;
-        }
-        return book;
-      });
-      this.setState({searchResults});
+
+      if (query === this.state.query) {
+        // if the return for this query is the last promise being executed,
+        // then update the search results
+
+        searchResults = searchResults.map((book) => {
+          const alreadyInShelf = this.props.books.find(b => b.id === book.id);
+          if (alreadyInShelf) {
+            book.shelf = alreadyInShelf.shelf;
+          }
+          return book;
+        });
+
+        this.setState({searchResults});
+      }
     });
   };
 
